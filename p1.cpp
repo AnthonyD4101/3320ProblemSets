@@ -1,5 +1,6 @@
 #include <iostream>
-
+#include <string>
+#include <vector>
 using namespace std;
 
 //! Problem Set 1
@@ -45,3 +46,40 @@ using namespace std;
 
 //! Output 3
 // 1
+
+int main()
+{
+    //TODO: Read in Input
+    int boardSize, numPieces;
+    cin >> boardSize >> numPieces;
+
+    cin.ignore();
+
+    //TODO: Make 2D Matrix for Chess Board
+    vector<vector<char> > chessBoard(boardSize, vector<char>(boardSize));
+
+    for (int i = 0; i < boardSize; i++)
+    {
+        string line;
+        getline(cin, line);
+
+        for (int j = 0; j < boardSize; j++)
+        {
+            chessBoard[i][j] = line[j];
+        }
+    }
+
+    //* Debugging
+    // cout << "Board Size: " << boardSize << endl;
+    // cout << "Number of Pieces: " << numPieces << endl;
+
+    // for(int i = 0; i < boardSize; i++)
+    // {
+    //     for(int j = 0; j < boardSize; j++)
+    //     {
+    //         cout << chessBoard[i][j];
+    //     }
+    //     cout << endl;
+    // }
+    //* Debugging
+}
