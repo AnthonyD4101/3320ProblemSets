@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <climits>
 using namespace std;
 
 //! Problem Set 3
@@ -41,6 +43,25 @@ using namespace std;
 // group 2: 4,7, sum: 11
 // No other assignments can be lower maximum sum.
 
+//? Submission ID: cff67550-851f-4bd9-a3ec-a66b54e1cce6
+
+void findMaxSum(vector<int> &numsArray, int currIndex, vector<int> &groupSums, int &maxSum)
+{
+    if(currIndex == numsArray.size())
+    {
+        maxSum = min(maxSum, *max_element(groupSums.begin(), groupSums.end()));
+        return;
+    }
+
+    for(int i = 0; i < groupSums.size(); i++)
+    {
+        groupSums[i] += numsArray[currIndex];
+        if(groupSums[i] < maxSum)
+            findMaxSum(numsArray, currIndex + 1, groupSums, maxSum);
+        groupSums[i] -= numsArray[currIndex];
+    }
+}
+
 int main()
 {
     //TODO: Read in Input
@@ -54,4 +75,14 @@ int main()
     {
         cin >> numsArray[i];
     }
+
+    sort(numsArray.rbegin(), numsArray.rend());
+
+    vector<int> groupSums(numGroups, 0);
+
+    int maxSum = INT_MAX;
+
+    findMaxSum(numsArray, 0, groupSums, maxSum);
+
+    cout << maxSum << endl;
 }
