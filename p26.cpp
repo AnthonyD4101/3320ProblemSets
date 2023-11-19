@@ -1,5 +1,8 @@
 #include <iostream>
-
+#include <vector>
+#include <string>
+#include <queue>
+#include <climits>
 using namespace std;
 
 //! Problem Set 26
@@ -74,3 +77,90 @@ using namespace std;
 
 //! Output 1
 // 5
+
+//? Submission ID: 724dbd26-5d54-417b-bb67-7400fc8294c9
+
+vector<int> dijkstraAlgorithm(int sourceNode, vector<vector<pair<int, int> > > &busGraph, int busRange)
+{
+    int numNodes = busGraph.size();
+    vector<int> distances(numNodes, 1e9);
+    distances[sourceNode] = 0;
+
+    //TODO: Implement priority queue
+    priority_queue<pair<int, int>, vector<pair<int, int> >, greater<pair<int, int> > > prioQueue;
+    prioQueue.push(make_pair(0, sourceNode));
+
+    while(!prioQueue.empty())
+    {
+        int currNode = prioQueue.top().second;
+        int currDist = prioQueue.top().first;
+
+        prioQueue.pop();
+ 
+        if(currDist > distances[currNode])
+            continue;
+
+        for(int i = 0; i < busGraph[currNode].size(); i++)
+        {
+            int nextNode = busGraph[currNode][i].first;
+            int nextDist = busGraph[currNode][i].second;
+
+            if(currDist + nextDist <= busRange && currDist + nextDist < distances[nextNode])
+            {
+                distances[nextNode] = currDist + nextDist;
+                prioQueue.push(make_pair(distances[nextNode], nextNode));
+            }
+        
+        }
+    }
+
+    return distances;
+}
+
+int main()
+{
+    //TODO: Read in Input
+    //Format: n, d, k, b, m
+    int numTowns, busRange, numWellConnected, townsWithBusStations, numRoads;
+    cin >> numTowns >> busRange >> numWellConnected >> townsWithBusStations >> numRoads;
+
+    vector<int> busStations(townsWithBusStations);
+
+    //Read in bus stations
+    for(int i = 0; i < townsWithBusStations; i++)
+        cin >> busStations[i];
+
+    vector<vector<pair<int, int> > > busGraph(numTowns);
+
+    for(int i = 0; i < numRoads; i++)
+    {
+        int src, dst, weight;
+        cin >> src >> dst >> weight;
+
+        busGraph[src].push_back(make_pair(dst, weight));
+        busGraph[dst].push_back(make_pair(src, weight));
+    }
+
+    vector<int> busStationReachableTownCount(numTowns, 0);
+
+    for(int i = 0; i < busStations.size(); i++)
+    {
+        int station = busStations[i];
+        vector<int> distances = dijkstraAlgorithm(station, busGraph, busRange);
+
+        for(int j = 0; j < numTowns; j++)
+        {
+            if(distances[j] <= busRange)
+                busStationReachableTownCount[j]++;
+        }
+    }
+
+    int numWellConnectedTowns = 0;
+    for(int i = 0; i < numTowns; i++)
+    {
+        if(busStationReachableTownCount[i] >= numWellConnected)
+            numWellConnectedTowns++;
+    }
+
+    cout << numWellConnectedTowns << endl;
+}
