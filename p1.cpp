@@ -47,39 +47,59 @@ using namespace std;
 //! Output 3
 // 1
 
+//? Submission ID: 17b641d6-06ef-49ee-834a-722c0ec14394
+
+bool isValidPlacement(vector<int> &temp, int column, int row)
+{
+    for(int i = 0; i < row; i++)
+        if(temp[i] == column)
+            return false;
+
+    return true;
+}
+
+int placePieces(vector<string> &chessBoard, vector<int> &temp, int numPieces, int row, int queensPlaced)
+{
+    if(queensPlaced == numPieces)
+        return 1;
+
+    if(row == chessBoard.size())
+        return 0;
+
+    int numWays = 0;
+
+    for(int i = 0; i < chessBoard.size(); i++)
+    {
+        if(chessBoard[row][i] == '#' && isValidPlacement(temp, i, row))
+        {
+            temp[row] = i;
+            numWays += placePieces(chessBoard, temp, numPieces, row + 1, queensPlaced + 1);
+            temp[row] = -1;
+        }
+    }
+
+    numWays += placePieces(chessBoard, temp, numPieces, row + 1, queensPlaced);
+
+    return numWays;
+}
+
 int main()
 {
     //TODO: Read in Input
     int boardSize, numPieces;
     cin >> boardSize >> numPieces;
 
-    cin.ignore();
-
-    //TODO: Make 2D Matrix for Chess Board
-    vector<vector<char> > chessBoard(boardSize, vector<char>(boardSize));
+    vector<string> chessBoard(boardSize);
 
     for (int i = 0; i < boardSize; i++)
     {
-        string line;
-        getline(cin, line);
-
-        for (int j = 0; j < boardSize; j++)
-        {
-            chessBoard[i][j] = line[j];
-        }
+        cin >> chessBoard[i];
     }
 
-    //* Debugging
-    // cout << "Board Size: " << boardSize << endl;
-    // cout << "Number of Pieces: " << numPieces << endl;
+    //Make a temp vector to store the column of each queen
+    vector<int> temp(boardSize, -1);
 
-    // for(int i = 0; i < boardSize; i++)
-    // {
-    //     for(int j = 0; j < boardSize; j++)
-    //     {
-    //         cout << chessBoard[i][j];
-    //     }
-    //     cout << endl;
-    // }
-    //* Debugging
+    int numWays = placePieces(chessBoard, temp, numPieces, 0, 0);
+
+    cout << numWays << endl;
 }
