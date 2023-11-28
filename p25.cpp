@@ -1,0 +1,43 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <sstream>
+using namespace std;
+
+//! Problem Set 25
+//! OPTIMAL JOB PROFIT SCHEUDLING
+
+//* Dynamic Programming
+
+// Consider a scenario where there are n distinct tasks, each with a designated startTime[i], an endTime[i], and a profit[i]. 
+// Design a DP algorithm to return the maximum profit you can take such that there are no two jobs in the subset with overlapping time range.
+
+// The input has 3 lines. The 1st line is the array for startTime. The 2nd line is the array for endTime. The 3rd line is the array for profit.
+
+//* Important Info:
+// You must solve this problem using dynamic programming (DP). If you do not use DP, you will not receive any credit for this assignment.
+
+//! Input 1
+// 1 1 1
+// 2 3 4
+// 5 6 4
+// Output: 6
+//* Explanation: Choose the 2nd job.
+
+//! Input 2
+// 1 2 3 4
+// 3 4 5 6
+// 50 10 40 70
+// Output: 120
+//* Explanation: Choose the 1st and 4th (last) job.
+
+//! Input 3
+// 1 2 3 4 6
+// 3 5 9 6 9
+// 20 20 100 70 60
+// Output: 150
+//* Explanation: Choose the 1st, 4th, and 5th job.
+
+int main(){
+
+}
