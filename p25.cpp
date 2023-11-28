@@ -39,5 +39,29 @@ using namespace std;
 //* Explanation: Choose the 1st, 4th, and 5th job.
 
 int main(){
+    //TODO: Read in Input
+    string startTime, endTime, profit;
+    vector<int> startTimes, endTimes, profits;
 
+    getline(cin, startTime);
+    getline(cin, endTime);
+    getline(cin, profit);
+
+    stringstream startStream(startTime);
+    stringstream endStream(endTime);
+    stringstream profitStream(profit);
+
+    int temp;
+
+    while(startStream >> temp)
+        startTimes.push_back(temp);
+    
+    while(endStream >> temp)
+        endTimes.push_back(temp);
+
+    while(profitStream >> temp)
+        profits.push_back(temp);
+
+    
+    return 0;
 }
