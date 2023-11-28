@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <list>
+#include <unordered_set>
 using namespace std;
 
 //! Problem Set 27
@@ -57,6 +59,80 @@ using namespace std;
 //! Output 1
 // 7
 
-int main(){
+bool detectCycle(vector<list<int> > &graph, int node, vector<bool> &visitedList, vector<bool> &recStack, bool &cycleDetected)
+{
+    visitedList[node] = true;
+    recStack[node] = true;
 
+    for(int neighbor : graph[node])
+    {
+        if(!visitedList[neighbor])
+        {
+            if(detectCycle(graph, neighbor, visitedList, recStack, cycleDetected))
+            {
+                cycleDetected = true;
+                return true;
+            }
+        }
+
+        else if(recStack[neighbor])
+        {
+            cycleDetected = true;
+            return true;
+        }
+    }
+
+    recStack[node] = false;
+    return false;
+}
+
+void removeNodes(vector<list<int> > &graph, int numNodes, unordered_set<int> &nodesToRemove)
+{
+    vector<bool> visitedList(numNodes, false);
+    vector<bool> recStack(numNodes, false);
+    bool cycleDetected = false;
+
+    for(int node = 0; node < numNodes; node++)
+        if(!visitedList[node])
+            detectCycle(graph, node, visitedList, recStack, cycleDetected);
+
+    if(cycleDetected)
+    {
+        for(int node = 0; node < numNodes; node++)
+            if(visitedList[node])
+                nodesToRemove.insert(node);
+
+        for(int node = 0; node < numNodes; node++)
+            if(nodesToRemove.count(node) > 0)
+                graph[node].clear();
+    }
+
+}
+
+int numOfSatisfiableNodes(vector<list<int> > &graph, int numNodes)
+{
+    unordered_set<int> nodesToRemove;
+    removeNodes(const_cast<vector<list<int> > &> (graph), numNodes, nodesToRemove);
+
+    return numNodes - nodesToRemove.size();
+}
+
+int main(){
+    int numNodes, numEdges;
+    cin >> numNodes >> numEdges;
+
+    //adjacency list representation of graph
+    vector<list<int> > graph(numNodes);
+
+    //numEdges is the number of remaining lines to read from input
+    for(int i = 0; i < numEdges; i++)
+    {
+        int source, destination;
+        cin >> source >> destination;
+
+        graph[source].push_back(destination);
+    }
+
+    int result = numOfSatisfiableNodes(graph, numNodes);
+    cout << result << endl;
 }
