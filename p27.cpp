@@ -59,62 +59,67 @@ using namespace std;
 //! Output 1
 // 7
 
-bool detectCycle(vector<list<int> > &graph, int node, vector<bool> &visitedList, vector<bool> &recStack, bool &cycleDetected)
-{
-    visitedList[node] = true;
-    recStack[node] = true;
+//? Submission ID: f6912a0e-0120-4692-90be-7fbc9894c553
 
-    for(int neighbor : graph[node])
+bool isCyclic(int i, vector<bool> &visitedList, vector<bool> &recStack, vector<bool> &inCycle, vector<list<int> > &graph)
+{
+    //if the node has not been visited, mark it as visited and in the recursion stack
+    if(!visitedList[i])
     {
-        if(!visitedList[neighbor])
+        visitedList[i] = true;
+        recStack[i] = true;
+
+        //for each node adjacent to i, if it has not been visited and is cyclic, mark i as in a cycle and return true
+        for(auto it = graph[i].begin(); it != graph[i].end(); it++)
         {
-            if(detectCycle(graph, neighbor, visitedList, recStack, cycleDetected))
+            if(!visitedList[*it] && isCyclic(*it, visitedList, recStack, inCycle, graph))
             {
-                cycleDetected = true;
+                inCycle[i] = true;
+                return true;
+            }
+
+            else if(recStack[*it])
+            {
+                inCycle[i] = true;
                 return true;
             }
         }
-
-        else if(recStack[neighbor])
-        {
-            cycleDetected = true;
-            return true;
-        }
     }
 
-    recStack[node] = false;
+    recStack[i] = false;
     return false;
 }
 
-void removeNodes(vector<list<int> > &graph, int numNodes, unordered_set<int> &nodesToRemove)
+int numOfSatisfiableNodes(int numNodes, vector<list<int> > &graph)
 {
+    //visitedList keeps track of which nodes have been visited
     vector<bool> visitedList(numNodes, false);
+    //recStack keeps track of which nodes are currently in the recursion stack
     vector<bool> recStack(numNodes, false);
-    bool cycleDetected = false;
+    //inCycle keeps track of which nodes are in a cycle
+    vector<bool> inCycle(numNodes, false);
 
-    for(int node = 0; node < numNodes; node++)
-        if(!visitedList[node])
-            detectCycle(graph, node, visitedList, recStack, cycleDetected);
-
-    if(cycleDetected)
+    //for each node, if it hasn't been visited, run isCyclic
+    for(int i = 0; i < numNodes; i++)
     {
-        for(int node = 0; node < numNodes; node++)
-            if(visitedList[node])
-                nodesToRemove.insert(node);
-
-        for(int node = 0; node < numNodes; node++)
-            if(nodesToRemove.count(node) > 0)
-                graph[node].clear();
+        if(!visitedList[i])
+        {
+            isCyclic(i, visitedList, recStack, inCycle, graph);
+        }
     }
 
-}
+    int nonCycleNodes = 0;
 
-int numOfSatisfiableNodes(vector<list<int> > &graph, int numNodes)
-{
-    unordered_set<int> nodesToRemove;
-    removeNodes(const_cast<vector<list<int> > &> (graph), numNodes, nodesToRemove);
+    //for each node, if it is not in a cycle, increment nonCycleNodes
+    for(int i = 0; i < numNodes; i++)
+    {
+        if(!inCycle[i])
+        {
+            nonCycleNodes++;
+        }
+    }
 
-    return numNodes - nodesToRemove.size();
+    return nonCycleNodes;
 }
 
 int main(){
@@ -133,6 +138,6 @@ int main(){
         graph[source].push_back(destination);
     }
 
-    int result = numOfSatisfiableNodes(graph, numNodes);
+    int result = numOfSatisfiableNodes(numNodes, graph);
     cout << result << endl;
 }
